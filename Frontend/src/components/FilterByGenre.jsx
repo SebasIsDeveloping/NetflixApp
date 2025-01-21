@@ -30,6 +30,7 @@ function FilterByGenre({ setFilms }) {
         <div>
             <select
                 value={genreSelected}
+                className="form-control"
                 onChange={(e) => setGenreSelected(e.target.value)}
             >
                 <option value="">Selecciona un género</option>

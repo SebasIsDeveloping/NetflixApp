@@ -22,7 +22,7 @@ function FilterByYear({ setFilms }) {
     return (
         <div>
             <select
-                id="year-select"
+                className="form-control"
                 value={yearSelected}
                 onChange={(e) => setYearSelected(e.target.value)}
             >

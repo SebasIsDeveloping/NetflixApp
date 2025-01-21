@@ -16,21 +16,29 @@ function Film() {
     }, []);
 
     function OnSaveFilm(film) {
-
+        // sin funcionalidad :(  
     }
-
 
 
     return (
         <div>
-            <h1 className="mb-5">Película</h1>
+            <button class="btn btn-secondary" onClick={() => history.back()}>Volver</button>
+            <h1 className="mb-5">{film.title}</h1>
+
             <div className="container mb-5">
                 {film ?
                     (
-                        <div className="row">
-                            <img src={"https://image.tmdb.org/t/p/w200" + film.poster_path} alt={film.title} />
-                            <h3>{film.title}</h3>
-                            <button onClick={() => { OnSaveFilm(film) }}></button>
+                        <div>
+                            <div className='card d-flex flex-row align-items-center gap-3'>
+                                <img src={"https://image.tmdb.org/t/p/w200" + film.poster_path} alt={film.title} width="250px" />
+
+                                <h3>{film.overview}</h3>
+                            </div>
+
+                            <div>
+                                <button className='btn btn-primary mt-3' onClick={() => { OnSaveFilm(film) }}> Favorita</button>
+                            </div>
+
                         </div>
                     ) : (
                         <p>Cargando película...</p>

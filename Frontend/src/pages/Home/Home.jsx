@@ -23,8 +23,11 @@ function Home() {
   return (
     <div>
       <h1 className="mb-5">Películas en Tendencia</h1>
-      <FilterByGenre setFilms={setFilms} />
-      <FilterByYear setFilms={setFilms} />
+      <div className='d-flex gap-5 mb-5 justify-content-center'>
+        <FilterByGenre setFilms={setFilms} />
+        <FilterByYear setFilms={setFilms} />
+      </div>
+
       < div className="container mb-5">
         {Array.isArray(films) && films.length > 0 ? (
           <div className="row">
