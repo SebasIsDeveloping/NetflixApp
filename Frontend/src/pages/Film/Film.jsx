@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './Film.css'
-import { options } from '../../apiConfig';
 import { getFilmDetail } from '../../controller/apiService';
 function Film() {
     const [film, setFilm] = useState([]);
@@ -16,6 +15,12 @@ function Film() {
         fetchFilm();
     }, []);
 
+    function OnSaveFilm(film) {
+
+    }
+
+
+
     return (
         <div>
             <h1 className="mb-5">Película</h1>
@@ -25,7 +30,7 @@ function Film() {
                         <div className="row">
                             <img src={"https://image.tmdb.org/t/p/w200" + film.poster_path} alt={film.title} />
                             <h3>{film.title}</h3>
-                            <button onClick={() => { OnSaveFilm() }}></button>
+                            <button onClick={() => { OnSaveFilm(film) }}></button>
                         </div>
                     ) : (
                         <p>Cargando película...</p>

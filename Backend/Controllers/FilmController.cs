@@ -1,77 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
+using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 
 namespace Backend.Controllers
 {
 
-    public class FilmController : ApiController
+    public class FilmController : ControllerBase
     {
+        private string _connectionString = "Data Source=LAPTOP-HL4QB854\\SQLEXPRESS;Initial Catalog=dbbInsfera;Integrated Security=True;TrustServerCertificate=True";
 
-        private AppDbContext db = new AppDbContext();
-
-        // GET api/movies
-        [HttpGet]
-        [Route("api/movies")]
-        public IHttpActionResult GetFilms()
+        //GET api/lists
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("user/lists/{userId}")]
+        public ActionResult GetUserLists(int userId)
         {
-            var movies = db.Film.ToList();
-            return Ok(movies);
-        }
-
-        // GET api/movies/5
-        [HttpGet]
-        [Route("api/movies/{id}")]
-        public IHttpActionResult GetMovie(int id)
-        {
-            var movie = db.Film.Find(id);
-            if (movie == null)
+            try
             {
-                return NotFound();
+                var lists = new List<string>();
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT Name, Description FROM Lists WHERE UserId = @UserId";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@UserId", 1);
+                        //command.Parameters.AddWithValue("@UserId", userId);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                lists.Add(reader.GetString(0));
+                            }
+                        }
+                    }
+                }
+
+                return Ok(lists); // Devuelve las listas en formato JSON
             }
-            return Ok(movie);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al obtener las listas: {ex.Message}");
+            }
         }
 
-
-        /// <summary>
-        /// /////////////
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Index()
+        // POST guarda como fav
+        [System.Web.Http.HttpPost]
+        public ActionResult SaveMovie(Film film)
         {
-            //Conexion a BDD
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
 
-            return View();
+                    // NO USARIA LA QUERY EN STRING DESDE EL BACK, LA TENDRIA ALMACENADA EN UN STORED PROCEDURE, POR FALTA DE TIEMPO LA DEJO AQUI
+                    string query = "INSERT INTO Films (Title, Overview, ReleaseDate, Poster) VALUES (@Title, @Overview, @ReleaseDate, @PosterPath)";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", film.Title);
+                        command.Parameters.AddWithValue("@Overview", film.Overview);
+                        command.Parameters.AddWithValue("@ReleaseDate", film.ReleaseDate);
+                        command.Parameters.AddWithValue("@PosterPath", film.Poster);
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                return Ok("Película guardada con éxito.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al guardar la película: {ex.Message}");
+            }
+
         }
 
-        // GET api/values
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/values/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
-        }
     }
 }
